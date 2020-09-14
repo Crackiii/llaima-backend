@@ -1,12 +1,16 @@
+//Importing all the dependencies
 const express = require("express");
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
 const crypto = require("crypto");
 const app = express();
+const port = process.env.PORT || 80; //Setting up port number
 
+//Things app is gonna use
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
+//Make a connection to the database
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -19,10 +23,12 @@ db.connect(function (err) {
   console.log("Connected!");
 });
 
+//Creating a unique hash
 const getHash = (string) => {
   return crypto.createHash("md5").update(string).digest("hex");
 };
 
+//Global query helper (Avoiding code repitition)
 const query = async (q) => {
   const p = await new Promise((resolve, reject) => {
     db.query(q, function (err, result) {
@@ -137,8 +143,6 @@ app.post("/blog", (req, res) => {
 
 //Update a blog
 
-//Delete a blog
-
-app.listen(3001, function () {
-  console.log("listening on 3001");
+app.listen(port, function () {
+  console.log(`listening on ${port}`);
 });
